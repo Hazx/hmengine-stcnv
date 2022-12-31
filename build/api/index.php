@@ -94,10 +94,11 @@ function returnErrorJson($msg, $code){
     return;
 }
 
-function stcnv($text_orig, $cnv_type){
-    if($cnv_type == "s2ttw"){
+// 执行简繁转换  传参: 文本 转换模式（s2ttw/ttw2s）
+function stcnv($text_orig, $cnv_mode){
+    if($cnv_mode == "s2ttw"){
         $stcnv_fun = opencc_open("s2twp.json");
-    }else if($cnv_type == "ttw2s"){
+    }else if($cnv_mode == "ttw2s"){
         $stcnv_fun = opencc_open("tw2sp.json");
     }
     $text_cnv = opencc_convert($text_orig, $stcnv_fun);
