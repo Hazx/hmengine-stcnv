@@ -32,7 +32,7 @@ HMengine-stcnv 是一个集成了简繁体文本转换模块及API接口的 Dock
 ## 创建容器
 
 ```shell
-docker run -d --name stcnv -p 80:5000 hazx/hmengine-stcnv:1.0
+docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:1.0
 ```
 
 ## 调用简繁转换接口
