@@ -50,7 +50,7 @@ docker run -d --name stcnv -p 80:5000 hazx/hmengine-stcnv:1.0
 ### 返回样式
 
 以 JSON 形式返回数据及信息：
-```json
+```text
 {
     "code": 执行结果码,
     "data": {
