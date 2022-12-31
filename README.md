@@ -10,7 +10,7 @@ HMengine-stcnv 是一个集成了简繁体文本转换模块及API接口的 Dock
 
 `这点小事自己动手啊` => `這點小事自己動手啊`
 
-# 镜像所包含模块及项目
+## 镜像所包含模块及项目
 
 - [Nginx](http://nginx.org/): 1.22.1
 - [PHP](https://www.php.net/): 8.0.26
@@ -35,7 +35,7 @@ HMengine-stcnv 是一个集成了简繁体文本转换模块及API接口的 Dock
 docker run -d --name stcnv -p 80:5000 hazx/hmengine-stcnv:1.0
 ```
 
-## 调用繁简转换接口
+## 调用简繁转换接口
 
 ### 请求
 
