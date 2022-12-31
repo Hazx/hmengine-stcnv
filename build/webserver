@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ -d "/home/web_log" ];then
+    chown -R root:root /home/web_log
+    chmod -R 664 /home/web_log
+fi
+
+## 判断存在并删除pid
+if [ -e "/web_server/nginx/logs/nginx.pid" ];then
+    rm -f /web_server/nginx/logs/nginx.pid
+fi
+if [ -e "/web_server/php/var/run/php-fpm.pid" ];then
+    rm -f /web_server/php/var/run/php-fpm.pid
+fi
+
+## Start Nginx
+/web_server/nginx/sbin/nginx -c /web_server/nginx/conf/nginx.conf
+if [ "$?" != 0 ] ; then
+    echo "[$(date +\"%Y%m%d-%H%M%S\")] Nginx Start Failed."
+fi
+
+## Start PHP8
+/web_server/php/sbin/php-fpm --daemonize --fpm-config /web_server/php/etc/php-fpm.conf --pid /web_server/php/var/run/php-fpm.pid
+if [ "$?" != 0 ] ; then
+    echo "[$(date +\"%Y%m%d-%H%M%S\")] PHP-FPM Start Failed."
+fi
+
+## 容器保活
+/web_server/keep

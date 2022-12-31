@@ -1,0 +1,132 @@
+#!/bin/bash
+
+include_opencc_zip=OpenCC-ver.1.1.6
+include_libxml_tar_xz=libxml2-2.10.3
+include_php_tar_gz=php-8.0.26
+include_opencc4php_zip=opencc4php-master
+include_nginx_tar_gz=nginx-1.22.1
+make_thread=8
+
+## 更换 apt 源
+rm -f /etc/apt/sources.list
+cat <<EOF > /etc/apt/sources.list
+deb http://mirrors.bfsu.edu.cn/ubuntu/ focal main restricted universe multiverse
+# deb-src http://mirrors.bfsu.edu.cn/ubuntu/ focal main restricted universe multiverse
+deb http://mirrors.bfsu.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
+# deb-src http://mirrors.bfsu.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
+deb http://mirrors.bfsu.edu.cn/ubuntu/ focal-backports main restricted universe multiverse
+# deb-src http://mirrors.bfsu.edu.cn/ubuntu/ focal-backports main restricted universe multiverse
+deb http://mirrors.bfsu.edu.cn/ubuntu/ focal-security main restricted universe multiverse
+# deb-src http://mirrors.bfsu.edu.cn/ubuntu/ focal-security main restricted universe multiverse
+# deb http://mirrors.bfsu.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
+# deb-src http://mirrors.bfsu.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
+EOF
+apt update -y
+apt upgrade -y
+
+## 调整时区
+export DEBIAN_FRONTEND="noninteractive"
+apt install -y tzdata
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+## 安装编译阶段所需组件
+apt install -y unzip make cmake g++ doxygen python3 pkg-config curl libcurl4-openssl-dev autoconf \
+    libonig-dev sqlite3 libsqlite3-dev libicu-dev libxml2 libxml2-dev libpcre3-dev zlib1g-dev
+
+## 配置账户及工作目录
+groupadd www
+useradd -M -s /bin/false -g www www
+mkdir /web_server
+mkdir /web_server/web_log
+chmod -R 755 /web_server
+
+
+## 编译安装 OpenCC
+cd /root/stcnv-build
+unzip ${include_opencc_zip}.zip
+cd ${include_opencc_zip}
+make -j${make_thread}
+make install
+
+## 编译安装 PHP
+cd /root/stcnv-build
+tar zxvf ${include_php_tar_gz}.tar.gz
+cd ${include_php_tar_gz}
+./configure \
+    --prefix=/web_server/php \
+    --with-config-file-path=/web_server/php/etc \
+    --enable-fpm \
+    --enable-bcmath \
+    --enable-mbstring \
+    --enable-opcache \
+    --enable-intl \
+    --enable-calendar \
+    --enable-sockets=shared \
+    --enable-xml \
+    --with-gettext \
+    --with-curl \
+    --with-mhash \
+    --with-libdir=lib64 \
+    --with-iconv \
+    --with-libxml \
+    --with-pdo_sqlite \
+    --with-sqlite3 \
+    --without-pear \
+    --disable-fileinfo
+make -j${make_thread}
+make install
+cd /root/stcnv-build
+cp php.ini /web_server/php/etc/php.ini
+cp php-fpm.conf /web_server/php/etc/php-fpm.conf
+cp php-www.conf /web_server/php/etc/php-fpm.d/www.conf
+
+## 编译安装 opencc4php
+cd /root/stcnv-build
+unzip ${include_opencc4php_zip}.zip
+cd ${include_opencc4php_zip}
+/web_server/php/bin/phpize
+./configure --with-php-config=/web_server/php/bin/php-config
+make -j${make_thread}
+make install
+echo "extension=opencc.so" >> /web_server/php/etc/php.ini
+
+## 编译安装 Nginx
+cd /root/stcnv-build
+tar zxvf ${include_nginx_tar_gz}.tar.gz
+cd ${include_nginx_tar_gz}
+./configure \
+    --prefix=/web_server/nginx \
+    --with-pcre \
+    --with-pcre-jit \
+    --with-http_secure_link_module
+export sbj='HMengine\ |\ Powered\ by\ Hazx.' 
+sed -i "s/\"nginx\/\"\ NGINX_VERSION/\"${sbj}\"/" src/core/nginx.h
+sed -i "s/\"NGINX\"/\"${sbj}\"/" src/core/nginx.h
+sed -i "s/\"Server\:\ nginx\"\ CRLF\;/\"Server\:\ ${sbj}\"\ CRLF\;/" src/http/ngx_http_header_filter_module.c
+sed -i "s/\"Server\:\ \"\ NGINX_VER\ CRLF\;/\"Server\:\ ${sbj}\"\ CRLF\;/" src/http/ngx_http_header_filter_module.c
+sed -i "s/\"Server\:\ \"\ NGINX_VER_BUILD\ CRLF\;/\"Server\:\ ${sbj}\"\ CRLF\;/" src/http/ngx_http_header_filter_module.c
+sed -i "s/<center>\"\ NGINX_VER\ \"<\/center>/<center>${sbj}<\/center>/" src/http/ngx_http_special_response.c
+sed -i "s/<center>\"\ NGINX_VER_BUILD\ \"<\/center>/<center>${sbj}<\/center>/" src/http/ngx_http_special_response.c
+sed -i "s/<center>nginx<\/center>/<center>${sbj}<\/center>/" src/http/ngx_http_special_response.c 
+sed -i "s/nginx\/\$nginx_version/\"${sbj}\"/" conf/fastcgi.conf
+sed -i "s/nginx\/\$nginx_version/\"${sbj}\"/" conf/fastcgi_params
+make -j${make_thread}
+make install
+cd /root/stcnv-build
+rm -fr /web_server/nginx/conf
+cp -R nginx-conf /web_server/nginx/conf
+
+## 配置服务
+cd /root/stcnv-build
+cp -R api /web_server/api
+cp webserver /web_server/webserver.sh
+cp keep /web_server/keep
+chmod +x /web_server/webserver.sh
+chmod +x /web_server/keep
+chown -R www:www /web_server/api
+
+## 清理
+rm -fr /root/stcnv-build
+apt remove -y unzip make cmake g++ doxygen python3 pkg-config autoconf sqlite3 libsqlite3-dev libpcre3-dev
+apt autoremove -y
+apt-get autoclean
