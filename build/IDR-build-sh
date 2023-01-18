@@ -48,6 +48,11 @@ cd ${include_opencc_zip}
 make -j${make_thread}
 make install
 
+## 配置自定义字典
+cd /root/stcnv-build/custom-dict
+opencc_dict -i ./Custom-ttw2s-sup.txt -f text -o /usr/share/opencc/Custom-ttw2s-sup.ocd2 -t ocd2
+cp *.json /usr/share/opencc/
+
 ## 编译安装 PHP
 cd /root/stcnv-build
 tar zxvf ${include_php_tar_gz}.tar.gz

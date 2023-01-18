@@ -1,0 +1,19 @@
+{
+    "name": "Custom dictionary supplement for ttw2s",
+    "segmentation": {
+      "type": "mmseg",
+      "dict": {
+        "type": "ocd2",
+        "file": "Custom-ttw2s-sup.ocd2"
+      }
+    },
+    "conversion_chain": [{
+      "dict": {
+        "type": "group",
+        "dicts": [{
+          "type": "ocd2",
+          "file": "Custom-ttw2s-sup.ocd2"
+        }]
+      }
+    }]
+}

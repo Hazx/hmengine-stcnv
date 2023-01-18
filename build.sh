@@ -1,7 +1,7 @@
 #!/bin/bash
 
 stcnv_img=hmengine-stcnv
-stcnv_ver=1.1
+stcnv_ver=2.0
 
 ## 清理工作目录
 if [ -e build_${stcnv_img} ];then
@@ -23,6 +23,7 @@ LABEL Version="${stcnv_ver}"
 COPY * /root/stcnv-build/
 COPY nginx-conf /root/stcnv-build/nginx-conf
 COPY api /root/stcnv-build/api
+COPY custom-dict /root/stcnv-build/custom-dict
 RUN bash /root/stcnv-build/IDR-build-sh
 CMD /web_server/webserver.sh
 EOF
