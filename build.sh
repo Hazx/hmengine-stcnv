@@ -1,7 +1,7 @@
 #!/bin/bash
 
 stcnv_img=hmengine-stcnv
-stcnv_ver=1.0
+stcnv_ver=1.1
 
 ## 清理工作目录
 if [ -e build_${stcnv_img} ];then

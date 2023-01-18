@@ -1,8 +1,8 @@
 # HMengine-stcnv
 
-HMengine-stcnv 是一个集成了简繁体文本转换模块及API接口的 Docker 镜像。如果你有需要可以拿去参考使用。
+HMengine-stcnv 是一个集成了简繁体中文转换模块及API接口的 Docker 镜像，支持简繁中文互转，支持港台异体字转换，支持大陆及台湾地区用语转换。如果你有需要可以拿去参考使用。
 
-对应镜像及版本：`hazx/hmengine-stcnv:1.0`
+对应镜像及版本：`hazx/hmengine-stcnv:1.1`
 
 ## 转换效果
 
@@ -32,7 +32,7 @@ HMengine-stcnv 是一个集成了简繁体文本转换模块及API接口的 Dock
 ## 创建容器
 
 ```shell
-docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:1.0
+docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:1.1
 ```
 
 ## 调用简繁转换接口
@@ -43,9 +43,13 @@ docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:1.0
 - 请求路径: `/convert` 或 `/?convert`
 - 请求参数: 
   - text: 要转换的文本
-  - mode: 转换模式，目前仅支持 `s2ttw` / `ttw2s`
-    - s2ttw: 简体中文 转 繁体中文（台湾地区用语）
-    - ttw2s: 繁体中文（台湾地区用语） 转 简体中文
+  - mode: 转换模式，参数如下
+    - s2t: 简体中文 转 繁体中文
+    - s2thk: 简体中文 转 繁体中文（香港地区异体字）
+    - s2ttw: 简体中文 转 繁体中文（台湾地区异体字）
+    - t2s: 繁体中文 转 简体中文
+    - thk2s: 繁体中文（香港地区异体字） 转 简体中文
+    - ttw2s: 繁体中文（台湾地区异体字） 转 简体中文
 
 ### 返回样式
 

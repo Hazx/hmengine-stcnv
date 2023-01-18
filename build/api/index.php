@@ -3,7 +3,13 @@
 // 请求方式: POST
 // 请求路径: /convert 或 /?convert
 // 请求参数: text: 要转换的文本
-// 　　　　  mode: 转换模式 s2ttw/ttw2s
+// 　　　　  mode: 转换模式
+// 　　　　       s2t: 简体中文 转 繁体中文
+// 　　　　       s2thk: 简体中文 转 繁体中文（香港地区异体字）
+// 　　　　       s2ttw: 简体中文 转 繁体中文（台湾地区异体字）
+// 　　　　       t2s: 繁体中文 转 简体中文
+// 　　　　       thk2s: 繁体中文（香港地区异体字） 转 简体中文
+// 　　　　       ttw2s: 繁体中文（台湾地区异体字） 转 简体中文
 
 // 返回结果: JSON
 // 　　　　  code: 执行结果码
@@ -19,7 +25,7 @@
 // 　　　  2 mode 参数错误
 
 // 配置
-$stcnv_ver = "1.0";
+$stcnv_ver = "1.1";
 
 // 记录程序开始时间
 $execTimeStart = microtime(true);
@@ -35,9 +41,6 @@ if(!isset($_POST['text'])){
 }else if(!isset($_POST['mode'])){
     returnErrorJson("缺少参数 mode", 1);
     die;
-}else if($_POST['mode'] != "s2ttw" && $_POST['mode'] != "ttw2s"){
-    returnErrorJson("mode 参数错误", 2);
-    die;
 }
 
 // 执行转换
@@ -47,7 +50,7 @@ $text_cnv = stcnv($text_orig, $cnv_mode);
 
 // 返回结果
 returnCnvJson($text_cnv, $cnv_mode);
-die;
+exit;
 
 
 
@@ -94,12 +97,23 @@ function returnErrorJson($msg, $code){
     return;
 }
 
-// 执行简繁转换  传参: 文本 转换模式（s2ttw/ttw2s）
+// 执行简繁转换  传参: 文本、转换模式
 function stcnv($text_orig, $cnv_mode){
-    if($cnv_mode == "s2ttw"){
+    if($cnv_mode == "s2t"){
+        $stcnv_fun = opencc_open("s2t.json");
+    }else if($cnv_mode == "s2thk"){
+        $stcnv_fun = opencc_open("s2hk.json");
+    }else if($cnv_mode == "s2ttw"){
         $stcnv_fun = opencc_open("s2twp.json");
+    }else if($cnv_mode == "t2s"){
+        $stcnv_fun = opencc_open("t2s.json");
+    }else if($cnv_mode == "thk2s"){
+        $stcnv_fun = opencc_open("hk2s.json");
     }else if($cnv_mode == "ttw2s"){
         $stcnv_fun = opencc_open("tw2sp.json");
+    }else{
+        returnErrorJson("mode 参数错误", 2);
+        die;
     }
     $text_cnv = opencc_convert($text_orig, $stcnv_fun);
     opencc_close($stcnv_fun);
