@@ -1,7 +1,7 @@
 #!/bin/bash
 
 stcnv_img=hmengine-stcnv
-stcnv_ver=2.0
+stcnv_ver=2.1
 
 ## 清理工作目录
 if [ -e build_${stcnv_img} ];then
@@ -27,6 +27,7 @@ COPY custom-dict /root/stcnv-build/custom-dict
 RUN bash /root/stcnv-build/IDR-build-sh
 CMD /web_server/webserver.sh
 EOF
+echo "<?php \$stcnv_ver = \"${stcnv_ver}\"; ?>" >> build_${stcnv_img}/build/api/stcnv_ver.php
 
 ## 编译与导出
 docker build -t ${stcnv_img}:${stcnv_ver} build_${stcnv_img}/build/

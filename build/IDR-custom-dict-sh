@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## 配置自定义字典
+cd /root/stcnv-build/custom-dict
+opencc_dict -i ./Custom-ttw2s-sup.txt -f text -o /usr/share/opencc/Custom-ttw2s-sup.ocd2 -t ocd2
+opencc_dict -i ./Custom-s2ttw-sup.txt -f text -o /usr/share/opencc/Custom-s2ttw-sup.ocd2 -t ocd2
+cp *.json /usr/share/opencc/

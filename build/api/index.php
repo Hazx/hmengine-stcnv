@@ -24,8 +24,8 @@
 // 　　　  1 缺少必要参数
 // 　　　  2 mode 参数错误
 
-// 配置
-$stcnv_ver = "2.0";
+// 加载版本信息
+require "./stcnv_ver.php";
 
 // 记录程序开始时间
 $execTimeStart = microtime(true);
@@ -121,6 +121,10 @@ function stcnv($text_orig, $cnv_mode){
     // 根据自定义补充字典进行修正
     if($cnv_mode == "ttw2s"){
         $stcnv_fun_sup = opencc_open("Custom-ttw2s-sup.json");
+        $text_cnv = opencc_convert($text_cnv, $stcnv_fun_sup);
+        opencc_close($stcnv_fun_sup);
+    }elseif($cnv_mode == "s2ttw"){
+        $stcnv_fun_sup = opencc_open("Custom-s2ttw-sup.json");
         $text_cnv = opencc_convert($text_cnv, $stcnv_fun_sup);
         opencc_close($stcnv_fun_sup);
     }

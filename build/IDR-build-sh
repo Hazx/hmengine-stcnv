@@ -49,9 +49,8 @@ make -j${make_thread}
 make install
 
 ## 配置自定义字典
-cd /root/stcnv-build/custom-dict
-opencc_dict -i ./Custom-ttw2s-sup.txt -f text -o /usr/share/opencc/Custom-ttw2s-sup.ocd2 -t ocd2
-cp *.json /usr/share/opencc/
+cd /root/stcnv-build/
+bash IDR-custom-dict-sh
 
 ## 编译安装 PHP
 cd /root/stcnv-build
