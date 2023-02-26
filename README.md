@@ -2,7 +2,7 @@
 
 HMengine-stcnv 是一个集成了简繁体中文转换模块及 API 接口的 Docker 镜像，支持简繁中文互转，支持港台异体字转换，支持大陆及台湾地区用语转换，支持自定义转换字典。如果你有需要可以拿去参考使用。
 
-对应镜像及版本：`hazx/hmengine-stcnv:2.1`
+对应镜像及版本：`hazx/hmengine-stcnv:2.2`
 
 ## 转换效果
 
@@ -19,7 +19,7 @@ HMengine-stcnv 是一个集成了简繁体中文转换模块及 API 接口的 Do
 
 # 使用镜像
 
-你可以直接下载使用我编译好的镜像 `docker pull hazx/hmengine-stcnv:2.1`，你也可以参自行编译和打包镜像。
+你可以直接下载使用我编译好的镜像 `docker pull hazx/hmengine-stcnv:2.2`，你也可以参自行编译和打包镜像。
 
 ## 映射端口
 
@@ -32,7 +32,7 @@ HMengine-stcnv 是一个集成了简繁体中文转换模块及 API 接口的 Do
 ## 创建容器
 
 ```shell
-docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:2.1
+docker run -d --name stcnv -p 5000:5000 hazx/hmengine-stcnv:2.2
 ```
 
 ## 调用简繁转换接口
